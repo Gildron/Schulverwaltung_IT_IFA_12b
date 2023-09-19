@@ -1,2 +1,1 @@
-CREATE USER 'schueler'@'%' IDENTIFIED BY 'Geheim01';
 GRANT ALL PRIVILEGES ON *.* TO 'schueler'@'%' WITH GRANT OPTION;

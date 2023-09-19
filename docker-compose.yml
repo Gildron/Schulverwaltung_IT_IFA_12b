@@ -9,14 +9,14 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ams_fx_test
       MYSQL_USER: schueler
       MYSQL_PASSWORD: Geheim01
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/1.sql
       - ./docker/database.sql:/docker-entrypoint-initdb.d/2.sql
-      - db_data:/var/lib/mysql
+      #- db_data:/var/lib/mysql
     ports:
       - '3306:3306'
 
