@@ -1,0 +1,23 @@
+
+
+.side-panel {
+    -fx-background-color: #d1dee6;
+    -fx-spacing: 100;
+    -fx-border-width: 0;
+    -fx-padding: 10 10 10 10;   /* Top Right Bottom Left */
+    -fx-vgap: 10;
+    -fx-hgap: 10;
+}
+
+.cue{
+    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    outline: none;
+    text-decoration: none;
+    -fx-text-alignment: center;
+    -fx-background-color: #81bdc4;
+}
+.main-panel{
+    -fx-background-color: #DAE1E5FF;
+
+}

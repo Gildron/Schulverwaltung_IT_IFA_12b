@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="1577b2f5-9216-4ba3-9ac6-cb6a2ffb3ae9" name="@localhost Mapping">
+      <data-sources db="8a715529-3444-4223-996e-8fffd15e361b" ddl="52f413b2-d839-49ed-8d9a-c97ec9753cba" />
+      <scope>
+        <node kind="database" negative="1" />
+      </scope>
+    </mapping>
+  </component>
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="52f413b2-d839-49ed-8d9a-c97ec9753cba" />
+          <option name="name" value="@localhost (DDL)" />
+          <option name="dbmsName" value="MARIADB" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/ams_fx_test.sql" />
+            </array>
+          </option>
+          <option name="outLayout" value="File per object by schema.groovy" />
+        </State>
+      </list>
+    </option>
+  </component>
+</project>
