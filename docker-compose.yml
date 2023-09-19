@@ -3,21 +3,80 @@ version: '3.1'
 
 services:
 
-  ams_fx_test:
+  mysql:
     image: mysql:latest
-    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
-    # (this is just an example, not intended to be a production configuration)
+    container_name: ams_fx_test
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ams_fx_test
+      MYSQL_USER: schueler
+      MYSQL_PASSWORD: Geheim01
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./docker/database.sql:/docker-entrypoint-initdb.d/2.sql
       - db_data:/var/lib/mysql
-
-  adminer:
-    image: adminer
-    restart: always
     ports:
-      - 3306:3306
+      - '3306:3306'
+
+  # --- Apache 2.4
+  #
+  apache:
+    container_name: "ampp-apache"
+    image: bitnami/apache:2.4
+    build: ./build/apache
+    ports:
+      - '80:8080'
+      - '443:8443'
+    depends_on:
+      - php
+    volumes:
+      - ./docker/www:/app:delegated
+      - ./docker/apache/my_vhost.conf:/vhosts/myapp.conf:ro
+      - ./docker/apache/certs:/certs
+
+  # --- PhpMyAdmin latest
+  # Acccess via
+  # http://127.0.0.1:8180 or https://127.0.0.1:8143
+  # Login with user schueler and Geheim01 password.
+  #
+  phpmyadmin:
+    container_name: "ampp-phpmyadmin"
+    image: bitnami/phpmyadmin:latest
+    build: ./build/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+      - '8180:8080'
+      - '8143:8443'
+    environment:
+      - DATABASE_HOST=host.docker.internal
+
+  # --- PHP 7.4
+  #
+  php:
+    container_name: "ampp-php"
+    image: bitnami/php-fpm:7.4
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+      - ./docker/www:/app:delegated
+      - ./docker/php/php.ini:/opt/bitnami/php/etc/conf.d/php.ini:ro
+
+
+  # --- Redis 6.0
+  #
+  redis:
+    container_name: "ampp-redis"
+    image: bitnami/redis:6.0
+    restart: unless-stopped
+    environment:
+      - REDIS_PASSWORD=at15jx13
 
 volumes:
+  ampp-mysql:
+    driver: local
   db_data:
+  docker:

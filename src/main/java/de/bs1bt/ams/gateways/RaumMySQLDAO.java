@@ -1,23 +1,16 @@
 package de.bs1bt.ams.gateways;
 
-import de.bs1bt.ams.db.MySQLConnection;
-import de.bs1bt.ams.db.iDBConnection;
 import de.bs1bt.ams.model.Raum;
 
+import java.sql.*;
 import java.util.ArrayList;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-public class RaumMySQLDataGateway implements iRaumDataGateway {
+public class RaumMySQLDAO {
     private Connection connection = null;
     private PreparedStatement ptmt = null;
     private ResultSet resultSet = null;
 
-    @Override
-    public void erstelleTabelle() throws DataGatewayException {
+    public void erstelleTabelle() throws DAOException {
         // Quelle: https://www.tutorialspoint.com/java_mysql/java_mysql_create_tables.htm
         String query = "CREATE TABLE `raeume` (raum_id integer PRIMARY KEY AUTO_INCREMENT, " +
                 "bezeichnung varchar(20), " +
@@ -27,33 +20,31 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                 "verantwortlicher varchar(20))";
         System.out.println(query);
         try {
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:33060/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         }
     }
 
-    @Override
-    public void loescheTabelle() throws DataGatewayException {
+    public void loescheTabelle() throws DAOException {
         String query = "DROP TABLE raeume";
         System.out.println(query);
         try {
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         }
     }
 
-    @Override
-    public Raum hole(int id) throws DataGatewayException {
+    public Raum hole(int id) throws DAOException {
         Raum raum = null;
         try {
             String queryString = "SELECT * FROM raeume WHERE raum_id=?";
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(queryString);
             ptmt.setInt(1, id);
             resultSet = ptmt.executeQuery();
@@ -63,7 +54,7 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
             {
                 if(count > 0) {
                     // soweit sollte es bei unique PK nie kommen:
-                    throw new DataGatewayException("Der Datensatz ist nicht einzigartig.");
+                    throw new DAOException("Der Datensatz ist nicht einzigartig.");
                 }
 
                 raum = new Raum( resultSet.getInt("raum_id"),
@@ -75,11 +66,11 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                 count++;
             }
             if ( 0 == count || null == raum) {
-                throw new DataGatewayException("Es ist kein Raum mit der raum_id=" + id + " vorhanden.");
+                throw new DAOException("Es ist kein Raum mit der raum_id=" + id + " vorhanden.");
             }
 
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
         } finally {
@@ -94,20 +85,19 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DataGatewayException(e.getMessage());
+                throw new DAOException(e.getMessage());
             }
         }
 
         return raum;
     }
 
-    @Override
-    public ArrayList<Raum> holeAlle() throws DataGatewayException {
+    public ArrayList<Raum> holeAlle() throws DAOException {
         ArrayList<Raum> liste = new ArrayList<Raum>();
 
         try {
             String query = "SELECT * FROM raeume";
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             resultSet = ptmt.executeQuery();
             while (resultSet.next()) {
@@ -120,7 +110,7 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                 liste.add(raum);
             }
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
         } finally {
@@ -135,18 +125,17 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DataGatewayException(e.getMessage());
+                throw new DAOException(e.getMessage());
             }
         }
         return liste;
     }
 
-    @Override
-    public int erstelle(Raum raumModel) throws DataGatewayException {
+    public int erstelle(Raum raumModel) throws DAOException {
         try {
             String query = "INSERT INTO raeume (bezeichnung, gebaeude, laenge_in_cm, breite_in_cm) VALUES (?,?,?,?)";
 
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             int param = 0;
             ptmt.setString(++param, raumModel.getBezeichnung());
@@ -163,7 +152,7 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
             }
 
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -173,18 +162,17 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DataGatewayException(e.getMessage());
+                throw new DAOException(e.getMessage());
             }
         }
         return -1;
     }
 
-    @Override
-    public void aktualisiere(Raum raumModel) throws DataGatewayException {
+    public void aktualisiere(Raum raumModel) throws DAOException {
         try {
             String query = "UPDATE `raeume` SET bezeichnung=?, gebaeude=?, laenge_in_cm=?, breite_in_cm=? WHERE raum_id=?";
 
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             int param = 0;
             ptmt.setString(++param, raumModel.getBezeichnung());
@@ -195,7 +183,7 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
             ptmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -205,24 +193,23 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DataGatewayException(e.getMessage());
+                throw new DAOException(e.getMessage());
             }
         }
     }
 
-    @Override
-    public void loesche(int id) throws DataGatewayException {
+    public void loesche(int id) throws DAOException {
 
         try {
             String query = "DELETE FROM raeume WHERE raum_id=?";
 
-            connection = MySQLConnection.getConnection();
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             ptmt.setInt(1, id);
             ptmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataGatewayException(e.getMessage());
+            throw new DAOException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -232,13 +219,53 @@ public class RaumMySQLDataGateway implements iRaumDataGateway {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DataGatewayException(e.getMessage());
+                throw new DAOException(e.getMessage());
             }
         }
     }
 
-    @Override
-    public void loesche(Raum raumModel) throws DataGatewayException {
+    public void loesche(Raum raumModel) throws DAOException {
         loesche(raumModel.getId());
     }
+
+    public ArrayList<Raum> getGebaude(String gebaudeName) throws Exception {
+        ArrayList<Raum> liste = new ArrayList<Raum>();
+        try {
+            String queryString = "SELECT * FROM raeume WHERE gebaeude = ?";
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            ptmt = connection.prepareStatement(queryString);
+            ptmt.setString(1,gebaudeName);
+            resultSet = ptmt.executeQuery();
+
+            while (resultSet.next()) {
+                Raum raum = new Raum( resultSet.getInt("raum_id"),
+                        resultSet.getString("bezeichnung"),
+                        resultSet.getString("gebaeude"),
+                        resultSet.getDouble("breite_in_cm"),
+                        resultSet.getDouble("laenge_in_cm")
+                );
+                liste.add(raum);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (ptmt != null) {
+                    ptmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e.getMessage());
+            }
+        }
+        return liste;
+    }
 }
+

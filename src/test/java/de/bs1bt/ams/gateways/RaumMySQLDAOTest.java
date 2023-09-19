@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class RaumMySQLDataGatewayTest {
+class RaumMySQLDAOTest {
 
     @BeforeAll
     static void beforeAll() {
@@ -20,6 +20,7 @@ class RaumMySQLDataGatewayTest {
             // in Ordnung, falls Tabelle noch nicht existiert
         }
     }
+
 
     @Test
     void testKomplett() {
@@ -75,5 +76,7 @@ class RaumMySQLDataGatewayTest {
         } catch (Exception e) {
             fail(e.getMessage());
         }
+
+
     }
 }
