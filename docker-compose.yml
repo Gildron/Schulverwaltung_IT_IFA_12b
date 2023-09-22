@@ -1,11 +1,17 @@
 # Use root/example as user/password credentials
 version: '3.1'
 
+networks:
+  amsnetwork:
+    driver: bridge
+
 services:
 
   mysql:
     image: mysql:latest
     container_name: ams_fx_test
+    networks:
+      - amsnetwork
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -20,10 +26,13 @@ services:
     ports:
       - '3306:3306'
 
+
   # --- Apache 2.4
   #
   apache:
     container_name: "ampp-apache"
+    networks:
+      - amsnetwork
     image: bitnami/apache:2.4
     build: ./build/apache
     ports:
@@ -43,6 +52,8 @@ services:
   #
   phpmyadmin:
     container_name: "ampp-phpmyadmin"
+    networks:
+      - amsnetwork
     image: bitnami/phpmyadmin:latest
     build: ./build/phpmyadmin
     depends_on:
@@ -57,6 +68,8 @@ services:
   #
   php:
     container_name: "ampp-php"
+    networks:
+      - amsnetwork
     image: bitnami/php-fpm:7.4
     restart: unless-stopped
     depends_on:
@@ -70,6 +83,8 @@ services:
   #
   redis:
     container_name: "ampp-redis"
+    networks:
+      - amsnetwork
     image: bitnami/redis:6.0
     restart: unless-stopped
     environment:
