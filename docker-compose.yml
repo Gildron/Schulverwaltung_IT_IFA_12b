@@ -27,23 +27,64 @@ services:
       - '3306:3306'
 
 
-  # --- Apache 2.4
-  #
-  apache:
-    container_name: "ampp-apache"
+#  # --- PHP 7.4
+#  #
+#  php:
+#    container_name: "ampp-php"
+#    networks:
+#      - amsnetwork
+#    image: bitnami/php-fpm:7.4
+#    build:
+#      dockerfile: Dockerfile
+#    restart: unless-stopped
+#    depends_on:
+#      - redis
+#    volumes:
+#      - ./web:/var/www/html
+#      - ./docker/php/php.ini:/opt/bitnami/php/etc/conf.d/php.ini:ro
+#
+#  # --- Apache 2.4
+#  #
+#  apache:
+#    container_name: "ampp-apache"
+#    networks:
+#      - amsnetwork
+#    image: bitnami/apache:2.4
+#    build:
+#      dockerfile: Dockerfile
+#    ports:
+#      - '80:8080'
+#      - '443:8443'
+#    depends_on:
+#      - php
+#    volumes:
+#      - ./web:/var/www/html
+#      - ./docker/apache/my_vhost.conf:/vhosts/myapp.conf:ro
+#      - ./docker/apache/certs:/certs
+
+
+
+  web:
+    image: nginx:latest
     networks:
       - amsnetwork
-    image: bitnami/apache:2.4
-    build: ./build/apache
     ports:
-      - '80:8080'
-      - '443:8443'
-    depends_on:
-      - php
+      - "80:80"
     volumes:
-      - ./docker/www:/app:delegated
-      - ./docker/apache/my_vhost.conf:/vhosts/myapp.conf:ro
-      - ./docker/apache/certs:/certs
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./web:/app/public
+
+
+  php:
+    image: php:fpm
+    networks:
+      - amsnetwork
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./web:/app/public
+
 
   # --- PhpMyAdmin latest
   # Acccess via
@@ -64,19 +105,7 @@ services:
     environment:
       - DATABASE_HOST=host.docker.internal
 
-  # --- PHP 7.4
-  #
-  php:
-    container_name: "ampp-php"
-    networks:
-      - amsnetwork
-    image: bitnami/php-fpm:7.4
-    restart: unless-stopped
-    depends_on:
-      - redis
-    volumes:
-      - ./docker/www:/app:delegated
-      - ./docker/php/php.ini:/opt/bitnami/php/etc/conf.d/php.ini:ro
+
 
 
   # --- Redis 6.0
