@@ -62,11 +62,38 @@ class DBConnectionSingleton {
         }
     }
 
-    public static function create(/** */) {
-        // to do
+    public static function create($inventarnummer, $hostname, $ipv4adresse) {
+        $conn = self::getConnection();
+
+        $stmt = $conn->prepare("INSERT INTO netzwerkgeraete (inventarnummer, hostname, ipv4adresse) VALUES (?, ?, ?)");
+
+        if (!$stmt) {
+            echo "Error preparing statement: " . $conn->error;
+            return;
+        }
+
+        $stmt->bind_param("iss", $inventarnummer, $hostname, $ipv4adresse);
+
+        if ($stmt->execute()) {
+            echo "Record created successfully";
+        } else {
+            echo "Error creating record: " . $stmt->error;
+        }
+
+        $stmt->close();
     }
+
     public static function update(/** */) {
         // to do
     }
 
+    public static function getAllInventoryNumber (){
+
+        $conn = self::getConnection();
+
+        $sql = "SELECT geraete.inventarnummer , geraete.bezeichnung  FROM geraete left join nmt_vorlage_komplett.netzwerkgeraete n on geraete.inventarnummer = n.inventarnummer WHERE n.inventarnummer IS NULL";
+        $all_categories = mysqli_query($conn,$sql);
+
+        return($all_categories);
+    }
 }
