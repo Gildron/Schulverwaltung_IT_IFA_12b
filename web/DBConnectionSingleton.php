@@ -1,5 +1,4 @@
 <?php
-
 include_once("NetzwerkGeraet.php");
 include_once("NetzwerkMonitor.php");
 
@@ -87,13 +86,36 @@ class DBConnectionSingleton {
         // to do
     }
 
-    public static function getAllInventoryNumber (){
+    public static function getAllGeraete (){
 
         $conn = self::getConnection();
 
-        $sql = "SELECT geraete.inventarnummer , geraete.bezeichnung  FROM geraete left join nmt_vorlage_komplett.netzwerkgeraete n on geraete.inventarnummer = n.inventarnummer WHERE n.inventarnummer IS NULL";
+        $sql = "SELECT * FROM geraete";
         $all_categories = mysqli_query($conn,$sql);
 
         return($all_categories);
     }
+
+    public static function login($username, $password): bool
+    {
+        $conn = self::getConnection();
+
+        // Verwenden von Prepared Statements
+        $stmt = $conn->prepare("SELECT * FROM benutzer WHERE benutzername = ? AND passwort = ?");
+        $stmt->bind_param("ss", $username, $password);
+
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+
+            
+            if ($result->num_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
 }

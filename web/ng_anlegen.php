@@ -13,7 +13,7 @@ include_once("DBConnectionSingleton.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if(     isset($_POST["inventarnummer"]) && isset($_POST["hostname"]) && $_POST["ipv4adresse"])
+    if( isset($_POST["inventarnummer"]) && isset($_POST["hostname"]) && $_POST["ipv4adresse"])
     {
         $inventarnummer = intval($_POST['inventarnummer']);
         $hostname = strval($_POST['hostname']);
@@ -37,10 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <label for="inventarnummer">Inventarnummer:</label><br>
     <select name = "inventarnummer" id =inventarnummer>
     <?php
-    $allInventarnummern = DBConnectionSingleton::getAllInventoryNumber();
+    $allInventarnummern = DBConnectionSingleton::getAllGeraete();
     while ($geraete = mysqli_fetch_array($allInventarnummern,MYSQLI_ASSOC)):; ?>
         <option value="<?php echo $geraete["inventarnummer"]; ?>">
             <?php echo $geraete["inventarnummer"];
+            echo "&nbsp;";
+            echo $geraete["bezeichnung"];
             ?>
         </option>
     <?php

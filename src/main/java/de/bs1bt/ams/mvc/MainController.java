@@ -2,7 +2,6 @@ package de.bs1bt.ams.mvc;
 
 import de.bs1bt.ams.gateways.DAOException;
 import de.bs1bt.ams.gateways.RaumMySQLDAO;
-import de.bs1bt.ams.model.Mitarbeiter;
 import de.bs1bt.ams.model.Raum;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -108,7 +107,7 @@ public class MainController {
     public Raum zeigeRaumDialogView(String title, Raum raumModel) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation((getClass().getResource("raum-dialog-view.fxml")));
+            fxmlLoader.setLocation((getClass().getResource("/de.bs1bt.ams.mvc/raum-dialog-view.fxml")));
             DialogPane raumDialogPane = fxmlLoader.load();
 
             RaumDialogController raumDialogController = fxmlLoader.getController();

@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import de.bs1bt.ams.db.DBCredetialsSingleton;
 import de.bs1bt.ams.gateways.DAOException;
 import de.bs1bt.ams.model.Mitarbeiter;
 import de.bs1bt.ams.model.Raum;
@@ -21,11 +22,11 @@ public class MitarbeiterMySQLDAO {
         String query = "CREATE TABLE `mitarbeiter` (mitarbeiter_nummer integer PRIMARY KEY AUTO_INCREMENT, " +
                 "name varchar(20), " +
                 "vorname varchar(20), " +
-                "geburtsdatum LocDate, " +
-                "eintrittsdatum LocDate, ";
+                "geburtsdatum Date, " +
+                "eintrittsdatum Date) ";
         System.out.println(query);
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
@@ -37,7 +38,7 @@ public class MitarbeiterMySQLDAO {
         String query = "DROP TABLE mitarbeiter";
         System.out.println(query);
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
@@ -48,8 +49,8 @@ public class MitarbeiterMySQLDAO {
     public Mitarbeiter hole(int mitarbeiter_nummer) throws DAOException {
         Mitarbeiter mitarbeiter = null;
         try {
-            String queryString = "SELECT * FROM mitarbeiter WHERE mitarbeiter_nummer=?";
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            String queryString = "SELECT * FROM mitarbeiter WHERE personalnummer=?";
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
             ptmt = connection.prepareStatement(queryString);
             ptmt.setInt(1, mitarbeiter_nummer);
             resultSet = ptmt.executeQuery();
@@ -101,7 +102,7 @@ public class MitarbeiterMySQLDAO {
 
         try {
             String query = "SELECT * FROM mitarbeiter";
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
             ptmt = connection.prepareStatement(query);
             resultSet = ptmt.executeQuery();
             while (resultSet.next()) {
@@ -138,9 +139,9 @@ public class MitarbeiterMySQLDAO {
 
     public int erstelle(Mitarbeiter mitarbeiter) throws DAOException {
         try {
-            String query = "INSERT INTO raeume (bezeichnung, gebaeude, laenge_in_cm, breite_in_cm) VALUES (?,?,?,?)";
+            String query = "INSERT INTO raeume (bezeichnung, gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?)";
 
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
             ptmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             int param = 0;
             ptmt.setString(++param, mitarbeiter.getName());

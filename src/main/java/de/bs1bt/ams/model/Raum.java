@@ -85,7 +85,7 @@ public class Raum {
         setBreiteInCm(breiteInCm);
     }
     public double getFlaecheInQm() {
-        return (laengeInCm * breiteInCm)/10000;
+        return (laengeInCm * breiteInCm);
     }
     public double getGebauedeFlaecheInQm() throws Exception {
         RaumMySQLDAO currentRaum = new RaumMySQLDAO();

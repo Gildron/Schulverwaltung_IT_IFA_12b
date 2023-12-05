@@ -29,7 +29,7 @@ public class RaumMySQLDAO {
     }
 
     public void loescheTabelle() throws DAOException {
-        String query = "DROP TABLE raum";
+        String query = "DROP TABLE raeume";
         System.out.println(query);
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
@@ -43,7 +43,7 @@ public class RaumMySQLDAO {
     public Raum hole(int id) throws DAOException {
         Raum raum = null;
         try {
-            String queryString = "SELECT * FROM raum WHERE raumnummer=?";
+            String queryString = "SELECT * FROM raeume WHERE raumnummer=?";
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(queryString);
             ptmt.setInt(1, id);
@@ -96,16 +96,16 @@ public class RaumMySQLDAO {
         ArrayList<Raum> liste = new ArrayList<Raum>();
 
         try {
-            String query = "SELECT * FROM raum";
+            String query = "SELECT * FROM raeume";
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
             resultSet = ptmt.executeQuery();
             while (resultSet.next()) {
-                Raum raum = new Raum( resultSet.getInt("raum_id"),
+                Raum raum = new Raum( resultSet.getInt("raumnummer"),
                         resultSet.getString("bezeichnung"),
-                        resultSet.getString("gebaeude"),
-                        resultSet.getDouble("breite_in_cm"),
-                        resultSet.getDouble("laenge_in_cm")
+                        resultSet.getString("gebaeudenummer"),
+                        resultSet.getDouble("breite_in_m"),
+                        resultSet.getDouble("laenge_in_m")
                 );
                 liste.add(raum);
             }
@@ -133,7 +133,7 @@ public class RaumMySQLDAO {
 
     public int erstelle(Raum raumModel) throws DAOException {
         try {
-            String query = "INSERT INTO raum (bezeichnung, gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?)";
+            String query = "INSERT INTO raeume (bezeichnung, gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?)";
 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -170,7 +170,7 @@ public class RaumMySQLDAO {
 
     public void aktualisiere(Raum raumModel) throws DAOException {
         try {
-            String query = "UPDATE raum SET bezeichnung=?, gebaeudenummer=?, laenge_in_m=?, breite_in_m=? WHERE raumnummer=?";
+            String query = "UPDATE raeume SET bezeichnung=?, gebaeudenummer=?, laenge_in_m=?, breite_in_m=? WHERE raumnummer=?";
 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
@@ -201,7 +201,7 @@ public class RaumMySQLDAO {
     public void loesche(int id) throws DAOException {
 
         try {
-            String query = "DELETE FROM raum WHERE raumnummer=?";
+            String query = "DELETE FROM raeume WHERE raumnummer=?";
 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query);
@@ -231,18 +231,18 @@ public class RaumMySQLDAO {
     public ArrayList<Raum> getGebaude(String gebaudeName) throws Exception {
         ArrayList<Raum> liste = new ArrayList<Raum>();
         try {
-            String queryString = "SELECT * FROM raum WHERE gebaeudenummer = ?";
+            String queryString = "SELECT * FROM raeume WHERE gebaeudenummer = ?";
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(queryString);
             ptmt.setString(1,gebaudeName);
             resultSet = ptmt.executeQuery();
 
             while (resultSet.next()) {
-                Raum raum = new Raum( resultSet.getInt("raum_id"),
+                Raum raum = new Raum( resultSet.getInt("raumnummer"),
                         resultSet.getString("bezeichnung"),
-                        resultSet.getString("gebaeude"),
-                        resultSet.getDouble("breite_in_cm"),
-                        resultSet.getDouble("laenge_in_cm")
+                        resultSet.getString("gebaeudenummer"),
+                        resultSet.getDouble("breite_in_m"),
+                        resultSet.getDouble("laenge_in_m")
                 );
                 liste.add(raum);
             }

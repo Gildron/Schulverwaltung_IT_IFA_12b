@@ -8,12 +8,16 @@
         DBConnectionSingleton::delete($_GET["ng_id"]);
     }
 ?>
+<head>
+    <title>Netzwerkgeräte</title>
+    <link href="app.css" rel="stylesheet" media="all" />
+</head>
 <div class="show" class="tab-pane fade" id="deviceManagementContent" role="tabpanel" aria-labelledby="profile-tab">
                     
     <!-- Aufgabe: Hier die Tabelle zur Geräteverwaltung ergänzen -->
     <h2>Geräteverwaltung</h2>
     <p><a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=ng_anlegen">Ein neues Netzwerkgerät anlegen.</a></p>
-    <table>
+    <table class="table">
         <tr>
             <th>ID</th>
             <th>Inventarnummer</th>
