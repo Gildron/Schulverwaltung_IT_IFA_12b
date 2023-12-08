@@ -20,18 +20,13 @@ public class AMSApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-        MainController mc =fxmlLoader.getController();
-        String platform = "DEV";
-        if ("DEV" == platform)
-        {
-//            mc.setRaumDAO(new RaumMySQLDAO());
-//            mc.setGeraeteDAO(new GeraeteMySQLDAO());
-
-        }
-        else
-        {
-            mc.setRaumDAO(new RaumRAMDAO());
-            mc.setGeraeteDAO(new GeraeteRAMDAO());
+        MainController mc = fxmlLoader.getController();
+        try {
+            mc.setDAO(Platform.SQL);
+            mc.zeigeRaeumeInTabelle();
+            mc.zeigeGesamtflaeche();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         mc.zeigeRaeumeInTabelle();

@@ -1,10 +1,8 @@
 package de.bs1bt.ams.mvc;
 
-import de.bs1bt.ams.db.GeraeteDAO;
+import de.bs1bt.ams.db.DAOFactoryFactory;
 import de.bs1bt.ams.db.RaumDAO;
-import de.bs1bt.ams.gateways.DAOException;
-import de.bs1bt.ams.gateways.RaumMySQLDAO;
-import de.bs1bt.ams.gateways.RaumRAMDAO;
+import de.bs1bt.ams.gateways.*;
 import de.bs1bt.ams.model.Raum;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,12 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,15 +31,11 @@ public class MainController {
     private TableColumn columnRaumGebaeude;
     @FXML
     private TableColumn columnRaumFlaeche;
-    @FXML
-    private Button cueFleache;
-    @FXML
-    private StringProperty buttonTextProperty;
-    @FXML
-    private GridPane cueGroup;
-    @FXML
+    private RaumDAO raumDAO;
 
-
+    public void setDAO(de.bs1bt.ams.mvc.Platform platform) {
+        this.raumDAO = (new DAOFactoryFactory()).create(platform).createRaumDAO();
+    }
 
     public void mnuUeberAMS(ActionEvent actionEvent) {
         Alert ueberAMS = new Alert(Alert.AlertType.INFORMATION);
@@ -75,11 +63,8 @@ public class MainController {
 
         // Iterator Pattern
         try {
-            // TODO Was bedeutet diese "feste Kopplung für die Austauschbarkeit bei Verwendung einer anderen Datenbank?
-            RaumMySQLDAO raumMySQLDataGateway = new RaumMySQLDAO();
-
             ObservableList<Raum> data = FXCollections.observableArrayList();
-            ArrayList<Raum> liste = raumMySQLDataGateway.holeAlle();
+            ArrayList<Raum> liste = raumDAO.holeAlle();
             Iterator<Raum> iterator = liste.iterator();
             while (iterator.hasNext()) {
                 Raum r = iterator.next();
@@ -88,7 +73,8 @@ public class MainController {
                 raumTableView.getItems().add(r);
             }
             raumTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        } catch (DAOException e) {
+        } catch (DataGatewayException e) {
+            e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Die Räume können nicht aus der Datenbank ausgelesen werden.");
             alert.show();
         }
@@ -102,15 +88,14 @@ public class MainController {
     }
 
     public void zeigeGesamtflaeche() {
-        RaumMySQLDAO raumMySQLDataGateway = new RaumMySQLDAO();
-        // TODO Modellieren und implementieren Sie den Algorithmus zur Berechnung der Gesamtfläche. Nutzen Sie dazu das vorhande raumDataGateway
+        // TODO Modellieren und implementieren Sie den Algorithmus zur Berechnung der Gesamtfläche. Nutzen Sie dazu das vorhandene raumDataGateway
 
     }
 
     public Raum zeigeRaumDialogView(String title, Raum raumModel) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation((getClass().getResource("/de.bs1bt.ams.mvc/raum-dialog-view.fxml")));
+            fxmlLoader.setLocation((getClass().getResource("raum-dialog-view.fxml")));
             DialogPane raumDialogPane = fxmlLoader.load();
 
             RaumDialogController raumDialogController = fxmlLoader.getController();
@@ -140,9 +125,7 @@ public class MainController {
         try {
             Raum neuerRaum = new Raum("Bezeichnung", "Gebäude");
             if(null != zeigeRaumDialogView("Raum anlegen", neuerRaum)) {
-                // TODO Was bedeutet diese "feste Kopplung für die Austauschbarkeit bei Verwendung einer anderen Datenbank?
-                RaumMySQLDAO raumMySQLDataGateway = new RaumMySQLDAO();
-                raumMySQLDataGateway.erstelle(neuerRaum);
+                raumDAO.erstelle(neuerRaum);
                 zeigeRaeumeInTabelle();
                 zeigeGesamtflaeche();
             }
@@ -164,12 +147,10 @@ public class MainController {
 
         if(null != zeigeRaumDialogView("Raum bearbeiten", raumBearbeiten)) {
             try {
-                // TODO Was bedeutet diese "feste Kopplung für die Austauschbarkeit bei Verwendung einer anderen Datenbank?
-                RaumMySQLDAO raumMySQLDataGateway = new RaumMySQLDAO();
-                raumMySQLDataGateway.aktualisiere(raumBearbeiten);
+                raumDAO.aktualisiere(raumBearbeiten);
                 zeigeRaeumeInTabelle();
                 zeigeGesamtflaeche();
-            } catch (DAOException e) {
+            } catch (DataGatewayException e) {
                 zeigeDatenbankAlert(e.getMessage());
             }
         }
@@ -190,44 +171,12 @@ public class MainController {
         Optional<ButtonType> clickedButton = alert.showAndWait();
         if(clickedButton.get() == ButtonType.OK) {
             try {
-                // TODO Was bedeutet diese "feste Kopplung für die Austauschbarkeit bei Verwendung einer anderen Datenbank?
-                RaumMySQLDAO raumMySQLDataGateway = new RaumMySQLDAO();
-                raumMySQLDataGateway.loesche(raumBearbeiten);
+                raumDAO.loesche(raumBearbeiten);
                 zeigeRaeumeInTabelle();
                 zeigeGesamtflaeche();
-            } catch (DAOException e) {
+            } catch (DataGatewayException e) {
                 zeigeDatenbankAlert(e.getMessage());
             }
         }
-    }
-    public void btnmitarbeiterEinrichtung(ActionEvent actionEvent){
-
-
-    }
-
-    public void initialize() {
-        Raum raumCue = raumTableView.getSelectionModel().getSelectedItem();
-        buttonTextProperty = new SimpleStringProperty("Value \n 0");
-        cueFleache.textProperty().bind(buttonTextProperty);
-        raumTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Raum>() {
-            @Override
-            public void changed(ObservableValue<? extends Raum> observable, Raum oldValue, Raum newValue) {
-                if (newValue != null) {
-                    double gebaudeflaeche = 0;
-                    try {
-                        gebaudeflaeche = newValue.getGebauedeFlaecheInQm();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    buttonTextProperty.set("Fläche Gebäude \n " + gebaudeflaeche);
-                }
-            }
-        });
-    }
-
-    public void setRaumDAO(RaumDAO raumMySQLDAO) {
-    }
-
-    public void setGeraeteDAO(GeraeteDAO geraeteDAO) {
     }
 }

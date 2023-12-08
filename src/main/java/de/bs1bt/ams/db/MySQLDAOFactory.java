@@ -3,7 +3,7 @@ package de.bs1bt.ams.db;
 import de.bs1bt.ams.gateways.GeraeteMySQLDAO;
 import de.bs1bt.ams.gateways.RaumMySQLDAO;
 
-public abstract class AbstractMySQLDAOFactory extends AbstractDAOFactory {
+public class MySQLDAOFactory extends AbstractDAOFactory {
 
     @Override
     public GeraeteDAO createGeraeteDAO (){

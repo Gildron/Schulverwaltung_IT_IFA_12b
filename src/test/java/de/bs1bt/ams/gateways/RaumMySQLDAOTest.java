@@ -16,7 +16,7 @@ class RaumMySQLDAOTest {
         RaumMySQLDAO rg = new RaumMySQLDAO();
         try {
             rg.loescheTabelle();
-        } catch (DAOException e) {
+        } catch (DataGatewayException e) {
             // in Ordnung, falls Tabelle noch nicht existiert
         }
     }
@@ -71,7 +71,7 @@ class RaumMySQLDAOTest {
             rg.erstelle(new Raum("U7", "IT-C"));
 
             assertEquals(7, rg.holeAlle().size());
-        } catch (DAOException e) {
+        } catch (DataGatewayException e) {
             fail(e.getMessage());
         } catch (Exception e) {
             fail(e.getMessage());

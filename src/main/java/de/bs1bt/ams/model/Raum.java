@@ -1,6 +1,5 @@
 package de.bs1bt.ams.model;
 
-import de.bs1bt.ams.gateways.DAOException;
 import de.bs1bt.ams.gateways.RaumMySQLDAO;
 
 import java.util.ArrayList;

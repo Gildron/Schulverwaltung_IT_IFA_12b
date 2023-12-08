@@ -9,42 +9,42 @@ public class RaumRAMDAO implements RaumDAO {
 
 
     @Override
-    public void erstelleTabelle() throws DAOException {
+    public void erstelleTabelle() throws DataGatewayException {
 
     }
 
     @Override
-    public void loescheTabelle() throws DAOException {
+    public void loescheTabelle() throws DataGatewayException {
 
     }
 
     @Override
-    public Raum hole(int id) throws DAOException {
+    public Raum hole(int id) throws DataGatewayException {
         return null;
     }
 
     @Override
-    public ArrayList<Raum> holeAlle() throws DAOException {
+    public ArrayList<Raum> holeAlle() throws DataGatewayException {
         return null;
     }
 
     @Override
-    public int erstelle(Raum raumModel) throws DAOException {
+    public int erstelle(Raum raumModel) throws DataGatewayException {
         return 0;
     }
 
     @Override
-    public void aktualisiere(Raum raumModel) throws DAOException {
+    public void aktualisiere(Raum raumModel) throws DataGatewayException {
 
     }
 
     @Override
-    public void loesche(int id) throws DAOException {
+    public void loesche(int id) throws DataGatewayException {
 
     }
 
     @Override
-    public void loesche(Raum raumModel) throws DAOException {
+    public void loesche(Raum raumModel) throws DataGatewayException {
 
     }
 

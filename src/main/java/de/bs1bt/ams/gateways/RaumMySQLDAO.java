@@ -13,7 +13,7 @@ public class RaumMySQLDAO implements RaumDAO {
 
 
     @Override
-    public void erstelleTabelle() throws DAOException {
+    public void erstelleTabelle() throws DataGatewayException {
         // Quelle: https://www.tutorialspoint.com/java_mysql/java_mysql_create_tables.htm
         String query = "CREATE TABLE `raeume` (raum_id integer PRIMARY KEY AUTO_INCREMENT, " +
                 "bezeichnung varchar(20), " +
@@ -27,12 +27,12 @@ public class RaumMySQLDAO implements RaumDAO {
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         }
     }
 
     @Override
-    public void loescheTabelle() throws DAOException {
+    public void loescheTabelle() throws DataGatewayException {
         String query = "DROP TABLE raeume";
         System.out.println(query);
         try {
@@ -40,12 +40,12 @@ public class RaumMySQLDAO implements RaumDAO {
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         }
     }
 
     @Override
-    public Raum hole(int id) throws DAOException {
+    public Raum hole(int id) throws DataGatewayException {
         Raum raum = null;
         try {
             String queryString = "SELECT * FROM raeume WHERE raumnummer=?";
@@ -58,7 +58,7 @@ public class RaumMySQLDAO implements RaumDAO {
             while (resultSet.next()) {
                 if (count > 0) {
                     // soweit sollte es bei unique PK nie kommen:
-                    throw new DAOException("Der Datensatz ist nicht einzigartig.");
+                    throw new DataGatewayException("Der Datensatz ist nicht einzigartig.");
                 }
 
                 raum = new Raum(resultSet.getInt("raum_id"),
@@ -70,11 +70,11 @@ public class RaumMySQLDAO implements RaumDAO {
                 count++;
             }
             if (0 == count || null == raum) {
-                throw new DAOException("Es ist kein Raum mit der raum_id=" + id + " vorhanden.");
+                throw new DataGatewayException("Es ist kein Raum mit der raum_id=" + id + " vorhanden.");
             }
 
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
         } finally {
@@ -89,7 +89,7 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
 
@@ -97,7 +97,7 @@ public class RaumMySQLDAO implements RaumDAO {
     }
 
     @Override
-    public ArrayList<Raum> holeAlle() throws DAOException {
+    public ArrayList<Raum> holeAlle() throws DataGatewayException {
         ArrayList<Raum> liste = new ArrayList<Raum>();
 
         try {
@@ -115,7 +115,7 @@ public class RaumMySQLDAO implements RaumDAO {
                 liste.add(raum);
             }
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
         } finally {
@@ -130,14 +130,14 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
         return liste;
     }
 
     @Override
-    public int erstelle(Raum raumModel) throws DAOException {
+    public int erstelle(Raum raumModel) throws DataGatewayException {
         try {
             String query = "INSERT INTO raeume (bezeichnung, personalnummer ,gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?,?)";
 
@@ -159,7 +159,7 @@ public class RaumMySQLDAO implements RaumDAO {
             }
 
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -169,13 +169,13 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
         return -1;
     }
 
-    public void aktualisiere(Raum raumModel) throws DAOException {
+    public void aktualisiere(Raum raumModel) throws DataGatewayException {
         try {
             String query = "UPDATE raeume SET bezeichnung=?, gebaeudenummer=?, laenge_in_m=?, breite_in_m=? WHERE raumnummer=?";
 
@@ -190,7 +190,7 @@ public class RaumMySQLDAO implements RaumDAO {
             ptmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -200,12 +200,12 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
     }
 
-    public void loesche(int id) throws DAOException {
+    public void loesche(int id) throws DataGatewayException {
 
         try {
             String query = "DELETE FROM raeume WHERE raumnummer=?";
@@ -216,7 +216,7 @@ public class RaumMySQLDAO implements RaumDAO {
             ptmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -226,12 +226,12 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
     }
 
-    public void loesche(Raum raumModel) throws DAOException {
+    public void loesche(Raum raumModel) throws DataGatewayException {
         loesche(raumModel.getId());
     }
 
@@ -255,7 +255,7 @@ public class RaumMySQLDAO implements RaumDAO {
                 liste.add(raum);
             }
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
         } finally {
@@ -270,7 +270,7 @@ public class RaumMySQLDAO implements RaumDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
         return liste;

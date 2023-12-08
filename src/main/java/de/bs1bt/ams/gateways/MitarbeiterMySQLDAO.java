@@ -1,23 +1,18 @@
 package de.bs1bt.ams.gateways;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
 import de.bs1bt.ams.db.DBCredetialsSingleton;
-import de.bs1bt.ams.gateways.DAOException;
 import de.bs1bt.ams.model.Mitarbeiter;
-import de.bs1bt.ams.model.Raum;
 
-import javax.xml.namespace.QName;
 import java.sql.*;
-import java.util.ArrayList;
 
 public class MitarbeiterMySQLDAO {
     private Connection connection = null;
     private PreparedStatement ptmt = null;
     private ResultSet resultSet = null;
 
-    public void erstelleTabelle() throws DAOException {
+    public void erstelleTabelle() throws DataGatewayException {
         // Quelle: https://www.tutorialspoint.com/java_mysql/java_mysql_create_tables.htm
         String query = "CREATE TABLE `mitarbeiter` (mitarbeiter_nummer integer PRIMARY KEY AUTO_INCREMENT, " +
                 "name varchar(20), " +
@@ -30,11 +25,11 @@ public class MitarbeiterMySQLDAO {
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         }
     }
 
-    public void loescheTabelle() throws DAOException {
+    public void loescheTabelle() throws DataGatewayException {
         String query = "DROP TABLE mitarbeiter";
         System.out.println(query);
         try {
@@ -42,7 +37,7 @@ public class MitarbeiterMySQLDAO {
             ptmt = connection.prepareStatement(query);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         }
     }
 
@@ -137,7 +132,7 @@ public class MitarbeiterMySQLDAO {
 //    }
 
 
-    public int erstelle(Mitarbeiter mitarbeiter) throws DAOException {
+    public int erstelle(Mitarbeiter mitarbeiter) throws DataGatewayException {
         try {
             String query = "INSERT INTO raeume (bezeichnung, gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?)";
 
@@ -158,7 +153,7 @@ public class MitarbeiterMySQLDAO {
             }
 
         } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
+            throw new DataGatewayException(e.getMessage());
         } finally {
             try {
                 if (ptmt != null) {
@@ -168,7 +163,7 @@ public class MitarbeiterMySQLDAO {
                     connection.close();
                 }
             } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
+                throw new DataGatewayException(e.getMessage());
             }
         }
         return -1;
