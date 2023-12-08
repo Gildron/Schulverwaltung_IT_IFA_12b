@@ -46,95 +46,95 @@ public class MitarbeiterMySQLDAO {
         }
     }
 
-    public Mitarbeiter hole(int mitarbeiter_nummer) throws DAOException {
-        Mitarbeiter mitarbeiter = null;
-        try {
-            String queryString = "SELECT * FROM mitarbeiter WHERE personalnummer=?";
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
-            ptmt = connection.prepareStatement(queryString);
-            ptmt.setInt(1, mitarbeiter_nummer);
-            resultSet = ptmt.executeQuery();
+//    public Mitarbeiter hole(int mitarbeiter_nummer) throws DAOException {
+//        Mitarbeiter mitarbeiter = null;
+//        try {
+//            String queryString = "SELECT * FROM mitarbeiter WHERE personalnummer=?";
+//            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
+//            ptmt = connection.prepareStatement(queryString);
+//            ptmt.setInt(1, mitarbeiter_nummer);
+//            resultSet = ptmt.executeQuery();
+//
+//            int count = 0;
+//            while (resultSet.next()) {
+//                if (count > 0) {
+//                    // soweit sollte es bei unique PK nie kommen:
+//                    throw new DAOException("Der Datensatz ist nicht einzigartig.");
+//                }
+//
+//                mitarbeiter = new Mitarbeiter(resultSet.getInt("mitarbeiter_nummer"),
+//                        resultSet.getString("name"),
+//                        resultSet.getString("vorname"),
+//                        resultSet.getDate("geburtsdatum"),
+//                        resultSet.getDate("eintrittsdatum")
+//                );
+//                count++;
+//            }
+//            if (0 == count) {
+//                throw new DAOException("Es ist kein Mitarbeiter mit der mitarbeiter_nummer=" + mitarbeiter_nummer + " vorhanden.");
+//            }
+//
+//        } catch (SQLException e) {
+//            throw new DAOException(e.getMessage());
+//        } catch (Exception e) {
+//            e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
+//        } finally {
+//            try {
+//                if (resultSet != null) {
+//                    resultSet.close();
+//                }
+//                if (ptmt != null) {
+//                    ptmt.close();
+//                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
+//            } catch (SQLException e) {
+//                throw new DAOException(e.getMessage());
+//            }
+//        }
+//
+//        return mitarbeiter;
+//    }
 
-            int count = 0;
-            while (resultSet.next()) {
-                if (count > 0) {
-                    // soweit sollte es bei unique PK nie kommen:
-                    throw new DAOException("Der Datensatz ist nicht einzigartig.");
-                }
-
-                mitarbeiter = new Mitarbeiter(resultSet.getInt("mitarbeiter_nummer"),
-                        resultSet.getString("name"),
-                        resultSet.getString("vorname"),
-                        resultSet.getDate("geburtsdatum"),
-                        resultSet.getDate("eintrittsdatum")
-                );
-                count++;
-            }
-            if (0 == count) {
-                throw new DAOException("Es ist kein Mitarbeiter mit der mitarbeiter_nummer=" + mitarbeiter_nummer + " vorhanden.");
-            }
-
-        } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (ptmt != null) {
-                    ptmt.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
-            }
-        }
-
-        return mitarbeiter;
-    }
-
-    public ArrayList<Mitarbeiter> holeAlle() throws DAOException {
-        ArrayList<Mitarbeiter> liste = new ArrayList<Mitarbeiter>();
-
-        try {
-            String query = "SELECT * FROM mitarbeiter";
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
-            ptmt = connection.prepareStatement(query);
-            resultSet = ptmt.executeQuery();
-            while (resultSet.next()) {
-                Mitarbeiter mitarbeiter = new Mitarbeiter(resultSet.getInt("mitarbeiter_nummer"),
-                        resultSet.getString("name"),
-                        resultSet.getString("vorname"),
-                        resultSet.getDate("geburtsdatum"),
-                        resultSet.getDate("eintrittsdatum")
-                );
-                liste.add(mitarbeiter);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (ptmt != null) {
-                    ptmt.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e.getMessage());
-            }
-        }
-        return liste;
-    }
+//    public ArrayList<Mitarbeiter> holeAlle() throws DAOException {
+//        ArrayList<Mitarbeiter> liste = new ArrayList<Mitarbeiter>();
+//
+//        try {
+//            String query = "SELECT * FROM mitarbeiter";
+//            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", DBCredetialsSingleton.getInstance().getUsername(), DBCredetialsSingleton.getInstance().getPassword());
+//            ptmt = connection.prepareStatement(query);
+//            resultSet = ptmt.executeQuery();
+//            while (resultSet.next()) {
+//                Mitarbeiter mitarbeiter = new Mitarbeiter(resultSet.getInt("mitarbeiter_nummer"),
+//                        resultSet.getString("name"),
+//                        resultSet.getString("vorname"),
+//                        resultSet.getDate("geburtsdatum"),
+//                        resultSet.getDate("eintrittsdatum")
+//                );
+//                liste.add(mitarbeiter);
+//            }
+//        } catch (SQLException e) {
+//            throw new DAOException(e.getMessage());
+//        } catch (Exception e) {
+//            e.printStackTrace(); // soweit sollte es bei bestehenden, validen Daten aus der DB nie kommen
+//        } finally {
+//            try {
+//                if (resultSet != null) {
+//                    resultSet.close();
+//                }
+//                if (ptmt != null) {
+//                    ptmt.close();
+//                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
+//            } catch (SQLException e) {
+//                throw new DAOException(e.getMessage());
+//            }
+//        }
+//        return liste;
+//    }
 
 
     public int erstelle(Mitarbeiter mitarbeiter) throws DAOException {

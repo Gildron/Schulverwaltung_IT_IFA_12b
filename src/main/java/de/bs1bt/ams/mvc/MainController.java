@@ -1,7 +1,10 @@
 package de.bs1bt.ams.mvc;
 
+import de.bs1bt.ams.db.GeraeteDAO;
+import de.bs1bt.ams.db.RaumDAO;
 import de.bs1bt.ams.gateways.DAOException;
 import de.bs1bt.ams.gateways.RaumMySQLDAO;
+import de.bs1bt.ams.gateways.RaumRAMDAO;
 import de.bs1bt.ams.model.Raum;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -220,5 +223,11 @@ public class MainController {
                 }
             }
         });
+    }
+
+    public void setRaumDAO(RaumDAO raumMySQLDAO) {
+    }
+
+    public void setGeraeteDAO(GeraeteDAO geraeteDAO) {
     }
 }

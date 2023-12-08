@@ -1,15 +1,18 @@
 package de.bs1bt.ams.gateways;
 
+import de.bs1bt.ams.db.RaumDAO;
 import de.bs1bt.ams.model.Raum;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class RaumMySQLDAO {
+public class RaumMySQLDAO implements RaumDAO {
     private Connection connection = null;
     private PreparedStatement ptmt = null;
     private ResultSet resultSet = null;
 
+
+    @Override
     public void erstelleTabelle() throws DAOException {
         // Quelle: https://www.tutorialspoint.com/java_mysql/java_mysql_create_tables.htm
         String query = "CREATE TABLE `raeume` (raum_id integer PRIMARY KEY AUTO_INCREMENT, " +
@@ -28,6 +31,7 @@ public class RaumMySQLDAO {
         }
     }
 
+    @Override
     public void loescheTabelle() throws DAOException {
         String query = "DROP TABLE raeume";
         System.out.println(query);
@@ -40,6 +44,7 @@ public class RaumMySQLDAO {
         }
     }
 
+    @Override
     public Raum hole(int id) throws DAOException {
         Raum raum = null;
         try {
@@ -50,14 +55,13 @@ public class RaumMySQLDAO {
             resultSet = ptmt.executeQuery();
 
             int count = 0;
-            while (resultSet.next())
-            {
-                if(count > 0) {
+            while (resultSet.next()) {
+                if (count > 0) {
                     // soweit sollte es bei unique PK nie kommen:
                     throw new DAOException("Der Datensatz ist nicht einzigartig.");
                 }
 
-                raum = new Raum( resultSet.getInt("raum_id"),
+                raum = new Raum(resultSet.getInt("raum_id"),
                         resultSet.getString("bezeichnung"),
                         resultSet.getString("gebaeude"),
                         resultSet.getDouble("breite_in_cm"),
@@ -65,7 +69,7 @@ public class RaumMySQLDAO {
                 );
                 count++;
             }
-            if ( 0 == count || null == raum) {
+            if (0 == count || null == raum) {
                 throw new DAOException("Es ist kein Raum mit der raum_id=" + id + " vorhanden.");
             }
 
@@ -92,6 +96,7 @@ public class RaumMySQLDAO {
         return raum;
     }
 
+    @Override
     public ArrayList<Raum> holeAlle() throws DAOException {
         ArrayList<Raum> liste = new ArrayList<Raum>();
 
@@ -101,7 +106,7 @@ public class RaumMySQLDAO {
             ptmt = connection.prepareStatement(query);
             resultSet = ptmt.executeQuery();
             while (resultSet.next()) {
-                Raum raum = new Raum( resultSet.getInt("raumnummer"),
+                Raum raum = new Raum(resultSet.getInt("raumnummer"),
                         resultSet.getString("bezeichnung"),
                         resultSet.getString("gebaeudenummer"),
                         resultSet.getDouble("breite_in_m"),
@@ -131,14 +136,16 @@ public class RaumMySQLDAO {
         return liste;
     }
 
+    @Override
     public int erstelle(Raum raumModel) throws DAOException {
         try {
-            String query = "INSERT INTO raeume (bezeichnung, gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?)";
+            String query = "INSERT INTO raeume (bezeichnung, personalnummer ,gebaeudenummer, laenge_in_m, breite_in_m) VALUES (?,?,?,?,?)";
 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             int param = 0;
             ptmt.setString(++param, raumModel.getBezeichnung());
+            ptmt.setInt(++param, 1);
             ptmt.setString(++param, raumModel.getGebaeude());
             ptmt.setDouble(++param, raumModel.getLaengeInCm());
             ptmt.setDouble(++param, raumModel.getBreiteInCm());
@@ -146,8 +153,8 @@ public class RaumMySQLDAO {
 
             // get the last added ID
             ResultSet rs = ptmt.getGeneratedKeys();
-            if(rs.next()) {
-                raumModel.setId( rs.getInt(1) );
+            if (rs.next()) {
+                raumModel.setId(rs.getInt(1));
                 return raumModel.getId();
             }
 
@@ -228,17 +235,18 @@ public class RaumMySQLDAO {
         loesche(raumModel.getId());
     }
 
+    @Override
     public ArrayList<Raum> getGebaude(String gebaudeName) throws Exception {
         ArrayList<Raum> liste = new ArrayList<Raum>();
         try {
             String queryString = "SELECT * FROM raeume WHERE gebaeudenummer = ?";
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams_fx_test", "schueler", "Geheim01");
             ptmt = connection.prepareStatement(queryString);
-            ptmt.setString(1,gebaudeName);
+            ptmt.setString(1, gebaudeName);
             resultSet = ptmt.executeQuery();
 
             while (resultSet.next()) {
-                Raum raum = new Raum( resultSet.getInt("raumnummer"),
+                Raum raum = new Raum(resultSet.getInt("raumnummer"),
                         resultSet.getString("bezeichnung"),
                         resultSet.getString("gebaeudenummer"),
                         resultSet.getDouble("breite_in_m"),
